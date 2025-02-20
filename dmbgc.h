@@ -23,6 +23,7 @@ typedef enum {
 
 void	*dmb_malloc(int size);
 void	dmb_gc(t_gc *head);
-t_gc	*get_head(GetHead	remove);
+t_gc	*get_head();
+void	dmb_free(void	*ptr);
 
 #endif

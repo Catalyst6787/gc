@@ -46,10 +46,11 @@ int	main(void)
 	s[0] = 's';
 	s[1] = '\0';
 	printf("%s\n", s);
+	dmb_free(s);
 
-	create_tab(get_head(GET));
+	create_tab();
 
-	dmb_gc(get_head(GET));
+	dmb_gc(get_head());
 
 	return(0);
 }

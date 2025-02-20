@@ -34,7 +34,7 @@ void	*dmb_malloc(int size)
 	ptr = malloc(size);
 	if (!ptr)
 		return(NULL);
-	append_node(ptr, get_head(GET));
+	append_node(ptr, get_head());
 	return(ptr);
 }
 
@@ -56,17 +56,10 @@ void	dmb_gc(t_gc *head)
 	}
 }
 
-t_gc	*get_head(GetHead	remove)
+t_gc	*get_head()
 {
 	static	t_gc	*head;
 
-	if (remove == REMOVE)
-	{
-		if (head)
-			free(head);
-		head = NULL;
-		return(NULL);
-	}
 	if (!head)
 	{
 		head = malloc(sizeof(t_gc));
@@ -76,4 +69,28 @@ t_gc	*get_head(GetHead	remove)
 		head->next = NULL;
 	}
 	return(head);
+}
+
+void	dmb_free(void	*ptr)
+{
+	t_gc	*tail;
+	t_gc	*prev;
+
+	tail = get_head();
+	prev = get_head();
+	while(tail)
+	{
+		if (tail->ptr == ptr)
+		{
+			free(ptr);
+			tail->ptr = NULL;
+			prev->next = tail->next;
+			free(tail);
+			return ;
+		}
+		prev = tail;
+		tail = tail->next;
+	}
+	free(ptr);
+	return ;
 }
