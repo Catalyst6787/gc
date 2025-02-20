@@ -6,7 +6,7 @@
 /*   By: lfaure <lfaure@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 17:38:33 by lfaure            #+#    #+#             */
-/*   Updated: 2025/02/20 17:50:37 by lfaure           ###   ########.fr       */
+/*   Updated: 2025/02/20 17:59:14 by lfaure           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 
 # define malloc(size) dmb_malloc(size)
 # define free(size) dmb_free(size)
-// change to dmb_force_free if you dont malloc everything with dmb
+// change to dmb_force_free if you dont allocate everything with dmb
 
 #endif

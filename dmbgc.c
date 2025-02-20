@@ -6,7 +6,7 @@
 /*   By: lfaure <lfaure@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 17:38:28 by lfaure            #+#    #+#             */
-/*   Updated: 2025/02/20 17:48:20 by lfaure           ###   ########.fr       */
+/*   Updated: 2025/02/20 17:56:30 by lfaure           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ static t_gc	*append_node(void *ptr, t_gc *head)
 
 	new_node = malloc(sizeof(t_gc));
 	if (!new_node)
-		return (printf("malloc error in append_node\n"), head);
+		return (head);
 	new_node->next = NULL;
 	new_node->ptr = NULL;
 	tail = get_tail(get_head(GET));
 	if (!tail)
-		return (printf("malloc error in get_head\n"), NULL);
+		return (NULL);
 	tail->next = new_node;
 	new_node->ptr = ptr;
 	return (head);
@@ -68,7 +68,7 @@ void	*dmb_malloc(size_t size)
 	return (ptr);
 }
 
-// frees everything malloc'ed with dmb, poor mans garbace collector.
+// frees everything allocated with dmb, poor mans garbace collector.
 void	dmb_gc(void)
 {
 	t_gc	*next;
@@ -90,7 +90,7 @@ void	dmb_gc(void)
 	get_head(REMOVE);
 }
 
-// Will not free pointers not malloc'ed without dmb, immune to double free
+// Will not free pointers allocated without dmb, immune to double free
 void	dmb_free(void	*ptr)
 {
 	t_gc	*tail;
@@ -115,7 +115,7 @@ void	dmb_free(void	*ptr)
 }
 
 // will free ptr even if it doesnt find it in the list.
-// Useful if you gain ownership from pointers malloc'ed outside of dmb
+// Useful if you gain ownership from pointers allocated outside of dmb
 // not immune to double free
 void	dmb_force_free(void	*ptr)
 {
