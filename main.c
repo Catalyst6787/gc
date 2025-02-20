@@ -1,4 +1,5 @@
 #include "dmbgc.h"
+#include "dmbgc_replace.h"
 
 void	create_tab()
 {
@@ -7,11 +8,11 @@ void	create_tab()
 	int j = 0;
 	char **tab;
 
-	tab = dmb_malloc(sizeof(char *) * (tab_size + 1));
+	tab = malloc(sizeof(char *) * (tab_size + 1));
 	tab[tab_size] = NULL;
 	while(i < tab_size)
 	{
-		tab[i] = dmb_malloc(sizeof(char) * (tab_size + 1));
+		tab[i] = malloc(sizeof(char) * (tab_size + 1));
 		tab[i][tab_size] = '\0';
 		while(j < tab_size)
 		{
@@ -36,17 +37,19 @@ int	main(void)
 {
 	char	*s;
 
-	s = dmb_malloc(sizeof(char) * 2);
-	s = dmb_malloc(sizeof(char) * 2);
-	s = dmb_malloc(sizeof(char) * 2);
-	s = dmb_malloc(sizeof(char) * 2);
-	s = dmb_malloc(sizeof(char) * 2);
+	s = malloc(sizeof(char) * 2);
+	s = malloc(sizeof(char) * 2);
+	s = malloc(sizeof(char) * 2);
+	s = malloc(sizeof(char) * 2);
+	s = malloc(sizeof(char) * 2);
 	if(!s)
 		return(printf("Error: %d", ERROR_MALLOC_FAILED), 1);
 	s[0] = 's';
 	s[1] = '\0';
 	printf("%s\n", s);
-	dmb_free(s);
+	free(s);
+	free(s);
+	free(s);
 
 	create_tab();
 

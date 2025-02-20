@@ -91,6 +91,6 @@ void	dmb_free(void	*ptr)
 		prev = tail;
 		tail = tail->next;
 	}
-	free(ptr);
+	//free(ptr);
 	return ;
 }
