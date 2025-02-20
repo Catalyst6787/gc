@@ -1,29 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dmbgc.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfaure <lfaure@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/20 17:38:14 by lfaure            #+#    #+#             */
+/*   Updated: 2025/02/20 17:49:19 by lfaure           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef DMBGC_H
 # define DMBGC_H
 
-#include <stdlib.h>
-#include <stdio.h> // REMOVE
+# include <stdlib.h>
 
 typedef struct s_gc
 {
-	void	*ptr;
+	void		*ptr;
 	struct s_gc	*next;
 }	t_gc;
 
-typedef enum {
-	ERROR_NONE = 0,
-	ERROR_MALLOC_FAILED,
-	ERROR_OTHER
-}	ErrorCode;
-
-typedef enum {
+typedef enum GetHead
+{
 	GET = 0,
 	REMOVE
-}	GetHead;
+}	t_get_head;
 
-void	*dmb_malloc(int size);
-void	dmb_gc(t_gc *head);
-t_gc	*get_head();
+void	*dmb_malloc(size_t size);
+void	dmb_gc(void);
 void	dmb_free(void	*ptr);
+void	dmb_force_free(void	*ptr);
 
 #endif

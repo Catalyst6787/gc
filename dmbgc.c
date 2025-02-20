@@ -1,49 +1,82 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dmbgc.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfaure <lfaure@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/20 17:38:28 by lfaure            #+#    #+#             */
+/*   Updated: 2025/02/20 17:48:20 by lfaure           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "dmbgc.h"
 
-t_gc	*get_tail(t_gc *head)
+static t_gc	*get_head(t_get_head remove)
 {
+	static t_gc	*head;
+
+	if (remove == REMOVE)
+		return (head = NULL, NULL);
 	if (!head)
-		return(head);
-	while(head->next)
-		head = head->next;
-	return(head);
+	{
+		head = malloc(sizeof(t_gc));
+		if (!head)
+			return (NULL);
+		head->ptr = NULL;
+		head->next = NULL;
+	}
+	return (head);
 }
 
-t_gc	*append_node(void *ptr, t_gc *head)
+static t_gc	*get_tail(t_gc *head)
+{
+	if (!head)
+		return (head);
+	while (head->next)
+		head = head->next;
+	return (head);
+}
+
+static t_gc	*append_node(void *ptr, t_gc *head)
 {
 	t_gc	*tail;
 	t_gc	*new_node;
 
 	new_node = malloc(sizeof(t_gc));
 	if (!new_node)
-		return(printf("malloc error in append_node\n"), head); // TODO handle fail
+		return (printf("malloc error in append_node\n"), head);
 	new_node->next = NULL;
 	new_node->ptr = NULL;
 	tail = get_tail(get_head(GET));
 	if (!tail)
-		return(printf("malloc error in get_head\n"), NULL);
+		return (printf("malloc error in get_head\n"), NULL);
 	tail->next = new_node;
 	new_node->ptr = ptr;
-	return(head);
+	return (head);
 }
 
-void	*dmb_malloc(int size)
+// stores the pointer in a linked list for easy freeing down the line
+void	*dmb_malloc(size_t size)
 {
 	void	*ptr;
 
 	ptr = malloc(size);
 	if (!ptr)
-		return(NULL);
-	append_node(ptr, get_head());
-	return(ptr);
+		return (NULL);
+	append_node(ptr, get_head(GET));
+	return (ptr);
 }
 
-void	dmb_gc(t_gc *head)
+// frees everything malloc'ed with dmb, poor mans garbace collector.
+void	dmb_gc(void)
 {
-	t_gc *next;
+	t_gc	*next;
+	t_gc	*head;
 
+	head = get_head(GET);
 	next = NULL;
-	while(head)
+	while (head)
 	{
 		if (head->ptr)
 		{
@@ -54,33 +87,20 @@ void	dmb_gc(t_gc *head)
 		free(head);
 		head = next;
 	}
+	get_head(REMOVE);
 }
 
-t_gc	*get_head()
-{
-	static	t_gc	*head;
-
-	if (!head)
-	{
-		head = malloc(sizeof(t_gc));
-		if (!head)
-			return(NULL);
-		head->ptr = NULL;
-		head->next = NULL;
-	}
-	return(head);
-}
-
+// Will not free pointers not malloc'ed without dmb, immune to double free
 void	dmb_free(void	*ptr)
 {
 	t_gc	*tail;
 	t_gc	*prev;
 
-	tail = get_head();
-	prev = get_head();
-	while(tail)
+	tail = get_head(GET);
+	prev = get_head(GET);
+	while (tail)
 	{
-		if (tail->ptr == ptr)
+		if (tail->ptr && tail->ptr == ptr)
 		{
 			free(ptr);
 			tail->ptr = NULL;
@@ -91,6 +111,32 @@ void	dmb_free(void	*ptr)
 		prev = tail;
 		tail = tail->next;
 	}
-	//free(ptr);
+	return ;
+}
+
+// will free ptr even if it doesnt find it in the list.
+// Useful if you gain ownership from pointers malloc'ed outside of dmb
+// not immune to double free
+void	dmb_force_free(void	*ptr)
+{
+	t_gc	*tail;
+	t_gc	*prev;
+
+	tail = get_head(GET);
+	prev = get_head(GET);
+	while (tail)
+	{
+		if (tail->ptr && tail->ptr == ptr)
+		{
+			free(ptr);
+			tail->ptr = NULL;
+			prev->next = tail->next;
+			free(tail);
+			return ;
+		}
+		prev = tail;
+		tail = tail->next;
+	}
+	free(ptr);
 	return ;
 }
